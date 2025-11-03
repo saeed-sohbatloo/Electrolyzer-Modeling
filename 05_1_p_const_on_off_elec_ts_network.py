@@ -20,7 +20,7 @@ GEN_PATH= "/Users/mac/Downloads/Master Theises/MV-Cigre-github-test-data/Typical
 REACTIVE_PATH = "/Users/mac/Downloads/Master Theises/MV-Cigre-github-test-data/Typical-load-profile-MV-CIGRE-benchmark-main/5-days test case/Scenario A/Reactive_Node_Consumption.csv"
 
 START_HOUR = 0
-DURATION_HOURS = 72
+DURATION_HOURS = 120
 OUT_DIR = "./timeseries_results"
 os.makedirs(OUT_DIR, exist_ok=True)
 

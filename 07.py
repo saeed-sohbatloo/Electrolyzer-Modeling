@@ -147,7 +147,7 @@ def run_timeseries_opf_advanced(net: pp.pandapowerNet,
         col = active_df.columns[start_hour+t % active_df.shape[1]]  # wrap if necessary
 
         # Update hourly cost
-        net.poly_cost.at[sgen_idx, "cp1_eur_per_mw"] = cost_per_hour_full[t]/10000
+        net.poly_cost.at[sgen_idx, "cp1_eur_per_mw"] = 1/cost_per_hour_full[t]
 
         # Assign loads
         for node in active_df.index:
@@ -195,24 +195,39 @@ def run_timeseries_opf_advanced(net: pp.pandapowerNet,
                   "electrolyzer_cost_eur": electrolyzer_cost}).to_csv(os.path.join(out_dir,"electrolyzer_results.csv"), index=False)
 
     # --- Plotting ---
+    # --- PLOT ELECTROLYZER POWER ---
     hours = np.arange(duration_hours)
     electrolyzer_p_kw = np.array(electrolyzer_p) * -1000  # MW -> kW
+    electrolyzer_q_kvar = np.array(electrolyzer_q) * 1000  # MVar -> kVar
 
-    plt.figure(figsize=(12,4))
-    plt.plot(hours, electrolyzer_p_kw, 'b-o'); plt.xlabel("Hour"); plt.ylabel("Power [kW]")
-    plt.title("Electrolyzer Active Power"); plt.grid(True); plt.tight_layout()
-    plt.savefig(os.path.join(out_dir,"electrolyzer_power_kw.png")); plt.show()
+    plt.figure(figsize=(12, 4))
+    plt.plot(hours, electrolyzer_p_kw, 'b-o')
+    plt.xlabel("Hour");
+    plt.ylabel("Active Power [kW]")
+    plt.title("Electrolyzer Active Power")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig(os.path.join(out_dir, "electrolyzer_power_kw.png"))
+    plt.show()
 
-    plt.figure(figsize=(12,4))
-    plt.plot(hours, electrolyzer_q, 'orange', marker='s'); plt.xlabel("Hour"); plt.ylabel("Reactive Power [MVar]")
-    plt.title("Electrolyzer Reactive Power"); plt.grid(True); plt.tight_layout()
-    plt.savefig(os.path.join(out_dir,"electrolyzer_q.png")); plt.show()
+    plt.figure(figsize=(12, 4))
+    plt.plot(hours, electrolyzer_q_kvar, 'orange', marker='s')
+    plt.xlabel("Hour");
+    plt.ylabel("Reactive Power [kVar]")
+    plt.title("Electrolyzer Reactive Power")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig(os.path.join(out_dir, "electrolyzer_q_kvar.png"))
+    plt.show()
 
+
+    cost_full = np.tile(COST_PER_HOUR, int(np.ceil(duration_hours / len(COST_PER_HOUR))))[:duration_hours]
+    cost_full=np.array(cost_full)/1000
     fig, ax1 = plt.subplots(figsize=(12,4))
     ax2 = ax1.twinx()
     ax1.plot(hours, electrolyzer_p_kw, 'b-o', label='Power [kW]')
-    ax2.plot(hours, electrolyzer_cost, 'r-s', label='Cost [€]')
-    ax1.set_xlabel("Hour"); ax1.set_ylabel("Power [kW]", color='b'); ax2.set_ylabel("Cost [€]", color='r')
+    ax2.plot(hours, cost_full, 'r-s', label='Cost [€/kW]')
+    ax1.set_xlabel("Hour"); ax1.set_ylabel("Power [kW]", color='b'); ax2.set_ylabel("Cost [€/kW]", color='r')
     plt.title("Electrolyzer Power vs Cost"); ax1.grid(True); fig.tight_layout()
     plt.savefig(os.path.join(out_dir,"electrolyzer_power_cost.png")); plt.show()
 
@@ -276,4 +291,3 @@ if __name__=="__main__":
         out_dir=OUT_DIR
     )
 
-    print("✅ Advanced timeseries OPF with electrolyzer and plots completed.")

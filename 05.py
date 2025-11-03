@@ -55,12 +55,12 @@ GEN_PATH= "/Users/mac/Downloads/Master Theises/MV-Cigre-github-test-data/Typical
 REACTIVE_PATH = "/Users/mac/Downloads/Master Theises/MV-Cigre-github-test-data/Typical-load-profile-MV-CIGRE-benchmark-main/5-days test case/Scenario A/Reactive_Node_Consumption.csv"
 
 
-DURATION_HOURS = 72
+DURATION_HOURS = 120
 OUT_DIR = "timeseries_results"
 os.makedirs(OUT_DIR, exist_ok=True)
 
 ELECTROLYZER_BUS = None  # will set interactively
-ELECTROLYZER_P_NOMINAL_MW = 1.50
+ELECTROLYZER_P_NOMINAL_MW = 1.0
 ELECTROLYZER_PF = 0.95
 LINE_LOADING_THRESHOLD = 100.0
 VOLTAGE_THRESHOLD_PU = 0.98

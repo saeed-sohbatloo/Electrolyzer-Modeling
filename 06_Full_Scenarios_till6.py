@@ -22,9 +22,9 @@ LINE_LOADING_THRESHOLD = 100.0
 VOLTAGE_THRESHOLD_PU = 0.98
 
 # Reactive power (Q) control
-Q_MAX = 1.5
-DQ_OVER = 0.906
-DQ_UNDER = .804
+Q_MAX = 0.5
+DQ_OVER = 0.506
+DQ_UNDER = .404
 V_DB = 0.01
 V_OVER = 1.0 - V_DB
 V_UNDER = 1.0 + V_DB
@@ -34,8 +34,8 @@ V_UNDER = 1.0 + V_DB
 # -------------------------
 SCENARIOS = [
     {'name': 'No Electrolyzer', 'has_electrolyzer': False, 'onoff_control': False, 'q_control': False},
-    {'name': 'Electrolyzer without ON/OFF-Controller', 'has_electrolyzer': True, 'onoff_control': True, 'q_control': False},
-    {'name': 'Electrolyzer with ON/OFF-Controller', 'has_electrolyzer': True, 'onoff_control': True, 'q_control': True}
+    {'name': 'Electrolyzer ', 'has_electrolyzer': True, 'onoff_control': False, 'q_control': False},
+    {'name': 'Electrolyzer with Q-Controller', 'has_electrolyzer': True, 'onoff_control': False, 'q_control': True}
 ]
 
 # -------------------------
@@ -324,10 +324,14 @@ if __name__ == "__main__":
     ax1.set_ylabel("Voltage (p.u.)", color=color1)
 
     # Select a scenario to show voltage
+    bus_v_ref = None
     for sc in SCENARIOS:
         if has_elec_dict[sc['name']] and sc['onoff_control']:
             bus_v_ref = bus_v_dict[sc['name']]
             break
+    if bus_v_ref is None:
+        bus_v_ref = bus_v_dict["Electrolyzer with Q-Controller"]
+
     ax1.plot(hours, bus_v_ref[str(electrolyzer_bus)], linestyle='--', color=color1, linewidth=1.5,
              label='Voltage (Reference)')
 
